@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Política de segurança: como CSS e JS agora são arquivos próprios (mesma origem),
+     não é mais preciso recalcular hash nenhum ao editar style.css/script.js — basta
+     mantê-los servidos junto com este index.html. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060B22">
+<meta name="description" content="LEMDÍRIS: um jogo de lógica e matemática com dragões, números e labirintos.">
+<title>LEMDÍRIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+<div class="blob blob-1" aria-hidden="true"></div>
+<div class="blob blob-2" aria-hidden="true"></div>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="gemGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/><stop offset="45%" stop-color="#dce6ff"/><stop offset="100%" stop-color="#9fb6ff"/>
+  </linearGradient>
+
+  <symbol id="ic-chevron" viewBox="0 0 24 24"><path d="M6 15 L12 9 L18 15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5 L20 12 L7 19.5 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20.5 C6 16 2.5 12.6 2.5 8.9 C2.5 6 4.8 3.8 7.6 3.8 C9.4 3.8 11 4.7 12 6.2 C13 4.7 14.6 3.8 16.4 3.8 C19.2 3.8 21.5 6 21.5 8.9 C21.5 12.6 18 16 12 20.5Z" fill="currentColor"/></symbol>
+  <symbol id="ic-heart-o" viewBox="0 0 24 24"><path d="M12 20.5 C6 16 2.5 12.6 2.5 8.9 C2.5 6 4.8 3.8 7.6 3.8 C9.4 3.8 11 4.7 12 6.2 C13 4.7 14.6 3.8 16.4 3.8 C19.2 3.8 21.5 6 21.5 8.9 C21.5 12.6 18 16 12 20.5Z" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.45"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2.5 L14.9 8.9 L22 9.6 L16.7 14.3 L18.3 21.3 L12 17.6 L5.7 21.3 L7.3 14.3 L2 9.6 L9.1 8.9 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-star-o" viewBox="0 0 24 24"><path d="M12 2.5 L14.9 8.9 L22 9.6 L16.7 14.3 L18.3 21.3 L12 17.6 L5.7 21.3 L7.3 14.3 L2 9.6 L9.1 8.9 Z" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.4"/></symbol>
+  <symbol id="ic-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="currentColor"/><path d="M8 10.5 V7.5 A4 4 0 0 1 16 7.5 V10.5" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+  <symbol id="ic-eraser" viewBox="0 0 24 24"><path d="M4 15 L14 5 L20 11 L12 19 H7 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><line x1="4" y1="19" x2="12" y2="19" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15.2" y1="15.2" x2="20.5" y2="20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="ic-route" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.4" fill="currentColor"/><circle cx="19" cy="18" r="2.4" fill="currentColor"/><path d="M5 8.4 C5 14 10 12 12 14 S19 16 19 15.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 3.4"/></symbol>
+  <symbol id="ic-bug" viewBox="0 0 24 24"><ellipse cx="12" cy="14" rx="6.5" ry="6" fill="currentColor"/><path d="M8 8 L5 5 M16 8 L19 5 M12 8 V5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+
+  <!-- gema do labirinto (gradiente único, referenciado por todas as gemas) -->
+  <symbol id="sp-gem" viewBox="0 0 40 40">
+    <path d="M20 2 L34 14 L26 38 L14 38 L6 14 Z" fill="url(#gemGrad)" stroke="#5c7ae0" stroke-width="1"/>
+    <path d="M20 2 L14 14 L26 14 Z" fill="#ffffff" opacity="0.6"/>
+    <path d="M6 14 L14 14 L14 38Z" fill="#7c96e8" opacity="0.35"/>
+    <path d="M34 14 L26 14 L26 38Z" fill="#4c6bd4" opacity="0.30"/>
+  </symbol>
+</defs>
+</svg>
+
+<div class="app" id="app">
+
+  <!-- ===== Tela inicial ===== -->
+  <section class="screen active" id="screen-start" aria-label="Início">
+    <div class="sparkle sparkle-1" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
+    <div class="sparkle sparkle-2" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
+    <div class="sparkle sparkle-3" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
+    <div class="sparkle sparkle-4" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
+
+    <div class="start-main">
+      <header class="brand">
+        <h1 class="logo-row"><span class="logo">LEMDÍRIS</span></h1>
+        <div class="subtitulo">Lógica · Educação · Matemática · Diversão</div>
+      </header>
+
+      <div class="hero-dragon-wrap">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div id="heroDragonSlot">
+          <div class="hero-ring">
+            <div class="dragon-avatar"><img src="dragao-hero.png" alt="Dragão arco-íris LEMDÍRIS"></div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-cta start-cta" id="btnIniciar"><svg class="ic ic-16" aria-hidden="true"><use href="#ic-play"/></svg> INÍCIO</button>
+    </div>
+    <div class="start-footer">um reino mágico de dragões, números e labirintos</div>
+  </section>
+
+  <!-- ===== Seleção de fases ===== -->
+  <section class="screen" id="screen-select" aria-label="Escolha sua fase">
+    <div class="header-row">
+      <button type="button" class="btn btn-ghost" id="btnVoltarInicio" aria-label="Voltar ao início"><svg class="ic ic-13 rot-n90" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+      <h2 class="header-title">Escolha sua fase</h2>
+      <button type="button" class="btn btn-ghost header-spacer" aria-hidden="true" tabindex="-1"><svg class="ic ic-13 rot-n90" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+    </div>
+    <div class="glass trilha-wrap">
+      <svg class="trilha-svgpath" viewBox="0 0 300 460" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M70 40 C 180 70, 40 120, 150 150 S 260 220, 150 250 S 40 320, 150 350 S 230 410, 150 430" fill="none" stroke="url(#pathGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 14"/>
+        <defs><linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9E6D"/><stop offset="100%" stop-color="#8A7CFF"/></linearGradient></defs>
+      </svg>
+      <div class="fase-col" id="trilha"></div>
+    </div>
+    <div class="select-msg" id="selectMsg" role="status"></div>
+  </section>
+
+  <!-- ===== Jogo ===== -->
+  <section class="screen" id="screen-game" aria-label="Jogo">
+    <div class="glass topbar">
+      <div class="topbar-row">
+        <button type="button" class="btn btn-ghost" id="btnVoltarFases"><svg class="ic ic-11 rot-n90" aria-hidden="true"><use href="#ic-chevron"/></svg> Fases</button>
+        <div class="fase-tag" id="faseLabel">FASE 1</div>
+        <div class="vidas" id="vidasLabel" role="img"></div>
+      </div>
+      <div class="pergunta">Quanto é <span id="perguntaTexto">8 × 4</span> ?</div>
+    </div>
+
+    <div class="maze-wrap"><div class="maze" id="maze"></div></div>
+
+    <div class="glass panel">
+      <div class="caminho-label"><span id="caminhoTitulo">MEU CAMINHO</span>
+        <button type="button" class="btn btn-ghost" id="btnLimpar" aria-label="Limpar caminho"><svg class="ic ic-12" aria-hidden="true"><use href="#ic-eraser"/></svg></button>
+      </div>
+      <div class="caminho-box" id="caminhoBox" role="group" aria-labelledby="caminhoTitulo"></div>
+      <div class="controls-grid">
+        <div class="dpad">
+          <button type="button" class="dbtn up" data-dir="up" aria-label="Para cima"><svg class="ic" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+          <button type="button" class="dbtn left" data-dir="left" aria-label="Para a esquerda"><svg class="ic rot-n90" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+          <button type="button" class="dbtn down" data-dir="down" aria-label="Para baixo"><svg class="ic rot-180" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+          <button type="button" class="dbtn right" data-dir="right" aria-label="Para a direita"><svg class="ic rot-90" aria-hidden="true"><use href="#ic-chevron"/></svg></button>
+        </div>
+        <div class="exec-col"><button type="button" class="btn btn-ok exec-btn" id="btnExecutar"><svg class="ic ic-15" aria-hidden="true"><use href="#ic-play"/></svg> EXECUTAR</button></div>
+      </div>
+      <div class="msg" id="msg" role="status" aria-live="polite">&nbsp;</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== Como jogar ===== -->
+<div class="overlay" id="tutorial" role="dialog" aria-modal="true" aria-labelledby="tutorialTitulo" hidden>
+  <div class="glass card tutorial-card">
+    <h2 id="tutorialTitulo">Como jogar</h2>
+    <div class="steps">
+      <div class="step"><div class="step-ic" aria-hidden="true"><svg class="ic"><use href="#ic-search"/></svg></div><div><b>RESOLVA</b>Descubra a resposta da pergunta matemática lá em cima.</div></div>
+      <div class="step"><div class="step-ic" aria-hidden="true"><svg class="ic"><use href="#ic-target"/></svg></div><div><b>ENCONTRE</b>Procure o número certo escondido no labirinto.</div></div>
+      <div class="step"><div class="step-ic" aria-hidden="true"><svg class="ic"><use href="#ic-route"/></svg></div><div><b>PLANEJE</b>Toque nas setas para montar seu caminho em "MEU CAMINHO".</div></div>
+      <div class="step"><div class="step-ic" aria-hidden="true"><svg class="ic"><use href="#ic-play"/></svg></div><div><b>EXECUTE</b>Toque em EXECUTAR e veja o dragãozinho seguir suas instruções.</div></div>
+    </div>
+    <div class="warn"><svg class="ic" aria-hidden="true"><use href="#ic-bug"/></svg> Cuidado! Você perde uma vida se o dragão encostar em um Bug ou parar em um número errado.</div>
+    <button type="button" class="btn btn-cta btn-block" id="btnComecar">Começar a jogar</button>
+  </div>
+</div>
+
+<!-- ===== Resultado (vitória / game over) ===== -->
+<div class="overlay" id="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitulo" hidden>
+  <div class="glass card">
+    <div class="result-icon" id="resultIcon" aria-hidden="true"></div>
+    <h2 id="resultTitulo">Muito bem!</h2>
+    <p id="resultTexto">Você encontrou a resposta certa.</p>
+    <button type="button" class="btn btn-cta btn-block" id="btnResultAcao">Jogar novamente</button>
+  </div>
+</div>
+
+<!-- Molde do dragão usado nas peças do labirinto (imagem em arquivo, na mesma pasta deste HTML) -->
+<template id="tplDragon"><div class="dragon-avatar"><img src="dragao-jogo.png" alt="Dragão"></div></template>
+
+<script src="script.js"></script>
+</body>
+</html>
